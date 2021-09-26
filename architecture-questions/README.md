@@ -5,8 +5,26 @@ Questões que eu elaborei antes da entrevista após assistir o vídeo [Nubank Da
 1. Como você criaria um modelo para decidir quem deve receber cartão de crédito (e quem não deve receber)?<br>
 Objetivos de negócio: diminuir o risco, aumentar o número de pessoas aprovadas.
 
-2. Como abordar o problemas para decidir o limite de crédito dado a um cliente? E para decidir uma solicitação de aumento de crédito?<br>
+2. Como abordar o problema para decidir o limite de crédito dado a um cliente? E para decidir uma solicitação de aumento de crédito?<br>
 Objetivos de negócio: criar modelos para aumentar/diminuir a exposição a riscos; aumentar o NPS (net promoter score); Long term metrics: O quanto se usa de um produto? O quanto se recomenda um produto (acho que este vale pra outras áreas tbm)
+Fonte: https://blog.nubank.com.br/limite-cartao-nubank/
+Quando alguém é aprovado para o cartão Nubank, fazemos uma projeção dos gastos dessa pessoa, análises de risco, perfil de uso e ainda usamos dados externos, como score (a pontuação usada pelo Serasa, que indica a probabilidade de as pessoas atrasarem ou não o pagamento de uma conta), por exemplo, para definir um patamar inicial e seguro de crédito.
+
+Assim como acontece na nossa análise de aprovação de pedidos, um grande desafio na hora de estabelecer o limite é a falta de acesso a informações que nos ajudariam a traçar um perfil mais adequado.
+
+Muitos dados fazem parte de um histórico privado construído entre as pessoas e as instituições financeiras.
+
+dicas que podem te ajudar a aumentar o limite do cartão Nubank
+Não atrasar o pagamento das faturas
+Explorar bem o limite atual
+Concentrar seus gastos no cartão Nubank
+Evitar o crédito rotativo
+Pagar o total da fatura até a data de vencimento
+Manter sua renda atualizada no app do Nubank.
+
+Na hora de definir o limite, analisamos também os dados a respeito do cliente em agências de crédito, o comportamento de compras e pagamentos, se há parcelamentos de fatura e se, em algum momento, o mesmo já teve dívidas com o Nubank.
+
+
 
 3. Dado um dataset de informações de compra com cartão de crédito, com cada amostra rotulada como fraude/não-fraude, como construir um algoritmo de detecção de fraude?<br>
 
