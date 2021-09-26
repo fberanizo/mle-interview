@@ -1,4 +1,8 @@
 #!/bin/python3
+"""
+Solution to this problem:
+https://www.hackerrank.com/challenges/queue-using-two-stacks/problem
+"""
 
 import math
 import os
