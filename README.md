@@ -13,6 +13,7 @@ Repositório para documentar a jornada de preparação para entrevistas de Machi
 ## [Programação/Codificação](./code-questions)
 
 Usar o [HackerRank](https://www.hackerrank.com/dashboard) ou [Leetcode](https://leetcode.com/).<br>
+Seguir as [dicas do Nubank](https://blog.nubank.com.br/engenharia-de-software-exercicios-de-algoritmos/) para resolver um exercício técnico de algoritmos.
 
 ## [Arquitetura de Machine Learning](./architecture-questions)
 
