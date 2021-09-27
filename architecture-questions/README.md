@@ -24,7 +24,8 @@ Veja as [Informações Importantes](#informações-importantes) para ajudar com 
 - TODO
 
 **O que pode dar errado?**
-- TODO
+- 
+- Vanish Gradients. Solução: 
 
 **Como posso iterar neste modelo/experimento/problema?**
 - TODO
@@ -226,6 +227,18 @@ Algumas ideias são deste vídeo: [Classificação de textos com Redes Neurais C
 - Criar hipóteses de negócio (qual o impacto do modelo)
 - Estipular quais dados serão necessários (e como coletá-los, se necessário)
 - Definir testes e experimentos
+- Versionamento de código
+- Criar pipelines de CI/CD
+- Criar Testes Unitários:
+  - testar corretude dos algoritmos, ex: overfitting de poucas amostras
+  - sanity-test: 1 predict com amostra aleatória ou pré-definida 
+  - testar se há variações significativas em métricas (comparado com versões anteriores do código)
+  - dever ser rápidos, e execução pode estar atrelada a um commit/push/pull-request
+  - compatibilidade de versões de bibliotecas
+  - Training/Serving skews (Schema Skews)
+- Criar Testes de Integração (Rodar Pipeline fim-a-fim com um subconjunto de dados). Geralmente é demorado. Pode rodar periodicamente (ex: 1 vez ao dia).
+- Realizar várias execuções e tirar a média dos resultados
+- Tracking de parâmetros, métricas e dependências de software
 - Construir um modelo baseline: data prep., algoritmos, arquiteturas, optimizer, regularization, batch size, avaliação offline/online...
 - Sugerir como utilizar o modelo em produção (Batch Job/Real Time? Shadow Mode/AB Testing...)
 - Por quanto tempo validar o modelo?
