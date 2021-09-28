@@ -5,10 +5,13 @@ Repositório para documentar a jornada de preparação para entrevistas de Machi
 ## Fontes de conhecimento
 
 - https://huyenchip.com/ml-interviews-book/
+- https://martinfowler.com/articles/cd4ml.html
 - https://mlengineer.io/how-i-practice-interviews-for-pins-mle-2021-e1df76235ffa 
 - https://discord.com/channels/814557108065534033/864933685836382208
 - https://bestpracticer.com/skill/machine-learning
 - https://bestpracticer.com/skill/senior-engineer
+- https://careers.microsoft.com/us/en/interviewtips
+- https://medium.com/quintoandar-tech-blog/machine-learning-pipeline-at-quintoandar-e2f24136006b
 
 ## [Programação/Codificação](./code-questions)
 

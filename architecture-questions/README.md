@@ -238,7 +238,14 @@ Algumas ideias são deste vídeo: [Classificação de textos com Redes Neurais C
   - Training/Serving skews (Schema Skews)
 - Criar Testes de Integração (Rodar Pipeline fim-a-fim com um subconjunto de dados). Geralmente é demorado. Pode rodar periodicamente (ex: 1 vez ao dia).
 - Realizar várias execuções e tirar a média dos resultados
-- Tracking de parâmetros, métricas e dependências de software
+- Tracking
+  - parâmetros/hiperparâmetros/features
+  - métricas e gráficos
+  - dependências de software
+  - training/validation/test sets
+  - estatísticas/importância relativa de cada feature
+  - quem treinou o modelo/motivação
+- Storage de modelos
 - Construir um modelo baseline: data prep., algoritmos, arquiteturas, optimizer, regularization, batch size, avaliação offline/online...
 - Sugerir como utilizar o modelo em produção (Batch Job/Real Time? Shadow Mode/AB Testing...)
 - Por quanto tempo validar o modelo?
@@ -256,6 +263,23 @@ Algumas ideias são deste vídeo: [Classificação de textos com Redes Neurais C
 - Está rodando rápido o suficiente?
 - Se não for possível estimar um ganho com um modelo, sugerir caminhos para melhorar a estimativa de valor entregue pelo modelo: fazer pesquisas, rankear qual projeto é o mais importante;
 - Qual o valor ganhado por atualizar o modelo (com mais dados, mais features)
+- Logging
+- Servir dados para modelos em realtime: batch compute + cache (cassandra/redis);
+
+**Arquitetura:**
+- Data pipeline
+  - Data Lake (mantém dados brutos, recebe eventos/logs o tempo todo). Vantagens: qualquer tipo de dado, mais barato. Alternativas: S3, GCS, Hadoop
+  - Data Warehouse (re). Vantagens: qualidade de dados, schema, velocidade. Desvantagens: apenas dados estruturados. Alternativas: Big Query, Redshift, DynamoDB, Cassandra.
+  - Data/Feature "factory" (by query).
+- Model management
+  - Model/Experiment tracking
+  - Data leak
+  - Tuning de hiperparâmetros
+  - Validação de modelo (corretude do algoritmo)
+  - Model Deployment (strategy)
+- Model deploy
+  - Logs: 
+Data Lake -> 
 
 ## Outros
 Casos de estudo retirados do [Machine Learning Systems Design](https://huyenchip.com/machine-learning-systems-design/toc.html).<br>
