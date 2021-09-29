@@ -48,20 +48,26 @@ self.info (the value of the node)
 """
 import unittest
 
-def visit(root):
-    values_in_preorder = [root.info]
+def visit_v2(root):
+    if root is None:
+        return
+    yield str(root.info)
+    yield from visit_v2(root.left)
+    yield from visit_v2(root.right)
+
+def visit_v1(root):
+    values_in_preorder = [str(root.info)]
     if root.left:
-        traversed_values = visit(root.left)
+        traversed_values = visit_v1(root.left)
         values_in_preorder.extend(traversed_values)
     if root.right:
-        traversed_values = visit(root.right)
+        traversed_values = visit_v1(root.right)
         values_in_preorder.extend(traversed_values)
     return values_in_preorder
 
 def preOrder(root):
-    values_in_preorder = visit(root)
-    print(" ".join(map(str, values_in_preorder)))
-    
+    print(" ".join(visit_v2(root)))
+
 
 class TestPreorderTraversal(unittest.TestCase)    :
     
@@ -71,10 +77,10 @@ class TestPreorderTraversal(unittest.TestCase)    :
         """
         root = Node(info=1)
 
-        result = visit(root)
+        result = visit_v2(root)
 
-        expected = [1]
-        self.assertEqual(result, expected)
+        expected = ['1']
+        self.assertEqual(list(result), expected)
 
     def test_visit_one_child_left(self):
         """
@@ -84,9 +90,9 @@ class TestPreorderTraversal(unittest.TestCase)    :
         left = Node(info=2)
         root.left = left
         
-        result = visit(root)
-        expected = [1, 2]
-        self.assertEqual(result, expected)
+        result = visit_v2(root)
+        expected = ['1', '2']
+        self.assertEqual(list(result), expected)
         
     def test_visit_one_child_right(self):
         """
@@ -96,9 +102,9 @@ class TestPreorderTraversal(unittest.TestCase)    :
         right = Node(info=2)
         root.right = right
         
-        result = visit(root)
-        expected = [1, 2]
-        self.assertEqual(result, expected)
+        result = visit_v2(root)
+        expected = ['1', '2']
+        self.assertEqual(list(result), expected)
         
     def test_visit_two_children(self):
         """
@@ -110,9 +116,9 @@ class TestPreorderTraversal(unittest.TestCase)    :
         right = Node(info=3)
         root.right = right
         
-        result = visit(root)
-        expected = [1, 2, 3]
-        self.assertEqual(result, expected)
+        result = visit_v2(root)
+        expected = ['1', '2', '3']
+        self.assertEqual(list(result), expected)
         
 unittest.main()
         
