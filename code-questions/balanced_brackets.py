@@ -3,7 +3,6 @@
 Solution to this problem:
 https://www.hackerrank.com/challenges/balanced-brackets/problem
 """
-#!/bin/python3
 
 import math
 import os
