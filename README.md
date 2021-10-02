@@ -12,6 +12,9 @@ Repositório para documentar a jornada de preparação para entrevistas de Machi
 - https://bestpracticer.com/skill/senior-engineer
 - https://careers.microsoft.com/us/en/interviewtips
 - https://medium.com/quintoandar-tech-blog/machine-learning-pipeline-at-quintoandar-e2f24136006b
+- http://patrickhalina.com/posts/systems-design-interview-guide/#high-level-approach
+- https://blog.pragmaticengineer.com/preparing-for-the-systems-design-and-coding-interviews/
+- https://medium.com/must-know-computer-science/system-design-message-queues-245612428a22
 
 ## [Programação/Codificação](./code-questions)
 

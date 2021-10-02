@@ -4,31 +4,106 @@ Questões que eu elaborei antes da entrevista após assistir o vídeo [Nubank Da
 Veja as [Informações Importantes](#informações-importantes) para ajudar com as respostas.
 
 ### 1. Como você criaria um modelo para decidir quem deve receber cartão de crédito (e quem não deve receber)?<br>
-**Objetivos de negócio:**
-- aumentar o número de pessoas aprovadas sem aumentar o risco de default (não-pagamento)
-- TODO
+**Perguntas para iniciar a conversa (entender o problema e definir o escopo do design):**
+<!--
+Partner with the interviewer to narrow the system definition down and understand which aspects of the design should be the focus of the conversation. At first, understand the general aspects of the system:
+Para que o sistema será usado?
+Qual objetivo ele tenta alcançar?
+Quem são os usuários? Como eles irão acessar o sistema ou quais são os pontos de entrada?
+Quais são as entradas e saídas do sistema?
+Escalabilidade deve ser uma preocupação neste momento?
+Quais componentes do sistema devem ter o maior foco de discussão?
+Quais tecnologias, estruturas de dados, ou algoritmos são úteis para este cenário?
+-->
 
-**Dados necessários:**
-- TODO
+- Onde modelo será usado?
+  - como ferramenta de auxílio a um analista;
+  - num processo semi-automatizado de aprovação em que acima de um limiar é aprovado e abaixo vai para análise humana;
+- Qual o objetivo de negócio quero otimizar?
+  - aumentar o número de pessoas aprovadas sem aumentar o risco de não-pagamento;
+- Qual a expectativa de latência (tempo de resposta) e de acessos concorrentes (throughput)?
+  - 50000 novas aplicações por dia; ~35 por minuto
+- Consigo realizar o objetivo sem um modelo de ML?
+  - posso aplicar regras de renda mínima, score mínimo, máximo de dívidas;
+- Quais os dados que tenho disponível?
+  - ex: histórico de perfis aprovados e reprovados;
+  - informações de renda e score do cliente;
+- Quem são os usuários?
+  - analistas do Nubank e os clientes do Nubank;
+- Como eles irão acessar o sistema?
+  - analista acessa através de uma aplicação web; cliente acessa através do smartphone;
+- Quais componentes do sistema devem ter o maior foco de discussão?
+  - ex: pipeline de dados;
 
-**Testes e experimentos:**
-- TODO
+**Solução de Alto-Nível:**<br>
+![Solução de Alto-Nível](./nubank-q1-high-level.png)
 
-**Sugestão de algoritmo/pipeline de ML:**
-- TODO
+<!--You’ll call out the types of models (eg. binary classifier) and how the system will be evaluated (eg. offline evaluation of increasing retention via A/B test.)-->
 
-**Métricas de negócio:**
-- TODO
+- Tipo de Modelo: Classificação Binária (1 - deve receber cartão; 0 - não deve receber cartão)
+- Avaliação Offline:
+  - target: 1 (cliente aprovado e bom pagador); 0 (cliente reprovado ou cliente aprovado e mau-pagador)
+  - precision (prioriza não aprovar maus pagadores a custa de reprovar bons pagadores)
+  - recall (prioriza não reprovar bons pagadores, a custa de aprovar alguns maus pagadores)
+  - f-score (faz um balanço entre precision e recall)
+  - dificuldade: falta de informação de falsos negativos (clientes que seriam bons pagadores e foram reprovados)
+  - dificuldade: se dados históricos foram obtidos com um modelo, os labels vão possuir o viés daquele modelo
+- Avaliação Online:
+  - Taxa de Maus Pagadores Aprovados em 1, 3, 6 meses;
+  - Média de Gastos dos Clientes Aprovados em 1, 3, 6 meses;
+  - Ganho com Clientes Aprovados (dá pra medir isto?);
+  - Métricas de Software: % de erros, tempo de resposta (atraso), throughput
 
-**Métricas de ML:**
-- TODO
+**Componentes da Arquitetura:**<br>
+![Componentes da Arquitetura](./nubank-q1-details.png)
+- Tipo de Modelo em Produção: Predição em Batch.
+Infraestrutura necessária:
+
+0. Message Broker
+  - Por que um Message Broker? Para permitir comunicação entre micro-serviços; Permite processamento assíncrono; permite distribuir processamento se necessário; melhor escalabilidade; permite "filtrar" pelas mensages de interesse;
+  - ex: Kafka, Amazon SQS
+1. Aplicação Mobile para Realizar os Pedidos
+2. Backend da Aplicação Mobile
+3. Data Warehouse para Organização dos Dados para App Mobile
+4. Fila para receber os pedidos para receber cartão (producer: backend mobile; consumers: jobs de "enriquecimento de dados" + predição, data lake, aplicações dashboard;)
+  - Por que uma fila? Permite processamento assíncrono; permite distribuir processamento se necessário; permite "filtrar" pelas mensagens de interesse;
+  - ex: RabbitMQ, Apache Kafka; Amazon SQS
+5. Data Pipeline para executar a Busca de Dados + Predição em Batch
+  - Por que predição em batch? A resposta do usuário não precisa ser instantânea; Predição em batch é mais eficiente;
+  - Dificuldades: precisa de dados confiáveis, então não deve consultar os dados   "raw" do Data Lake;
+  - Exemplos: Kubeflow Pipelines, Airflow; Google DataProc;
+6. Data Lake c/informações sobre o cliente e com histórico de outros clientes aprovados/reprovados/não-pagadores
+  - Por que um Data Lake? estabelece um local unificado de acesso aos dados; dá flexibilidade sobre a estrutura/qualidade dos dados;
+  - ex: HDFS (+Spark); S3 + Athena;
+7. Aplicação de Suporte ao Analista Humano
+8. Data Warehouse para Aplicação de Suporte
+9. Serviço que Notifica Clientes da Aprovação/Reprovação
+10. Feature Factory que Busca Dados do Data Lake e Prepara para Feature Store
+  - restrição de acesso apenas aos dados estritamente necessários
+  - ex: Python, SQL/Spark
+11. FeatureStore c/ dados limpos e preparados
+  - ex: cassandra, redis (cache caso precise de um atraso ainda menor)
+12. Treinamento do Classificador Binário
+  - ex: regressão logísitica, random forest, redes neurais, SVM...
+13. Storage de Modelos/Metadados
+  - ex: S3, MinIO, MLFlow, HDFS.
+14. Gateway para permitir Testes A/B
+  - ex: Istio (Kubernetes)
+15. Serviço de Inferência em Lote com Classificador Binário A
+16. Job para executar a Busca de Dados de Clientes Aprovados (1, 3, 6 meses) + Join com informações de Pagamento (SQL + Spark + Python)
+17. Data Warehouse para uso da Ferramenta de BI/Analytics
+18. Ferramenta de BI/Analytics para Explorar métricas online
+  - Por que uma ferramenta de BI? para informar visualmente, para prover uma interface "no code" para analistas;
 
 **O que pode dar errado?**
-- 
-- Vanish Gradients. Solução: 
+- TODO
 
 **Como posso iterar neste modelo/experimento/problema?**
 - TODO
+
+<!--
+Here’s where you’ll want to cover some advanced topics like how the system development could be split between different teams, long term ways the system could evolve to meet future business needs, common components that could be reused by different products, real world issues like regionalization or data schema migrations.
+-->
 
 ### 2. Como abordar o problema para decidir o limite de crédito dado a um cliente? E para decidir uma solicitação de aumento de crédito?<br>
 
@@ -264,6 +339,8 @@ Algumas ideias são deste vídeo: [Classificação de textos com Redes Neurais C
 - Se não for possível estimar um ganho com um modelo, sugerir caminhos para melhorar a estimativa de valor entregue pelo modelo: fazer pesquisas, rankear qual projeto é o mais importante;
 - Qual o valor ganhado por atualizar o modelo (com mais dados, mais features)
 - Logging
+- Como lidar com indisponibilidade
+- Alertar quando há problemas
 - Servir dados para modelos em realtime: batch compute + cache (cassandra/redis);
 
 **Arquitetura:**
@@ -278,6 +355,9 @@ Algumas ideias são deste vídeo: [Classificação de textos com Redes Neurais C
   - Validação de modelo (corretude do algoritmo)
   - Model Deployment (strategy)
 - Model deploy
+  - Real-Time. Vantagens: alta disponibilidade, pode até rodar embarcado (sem rede). Desvantagens: necessita de uma camada de cache para dados, maior preço, maior complexidade, exige monitoramento, failover.
+  - Batch/Job. Vantagens: menor custo, pode usar uma solução mais tradicional/barata de BD. Desvantagens: demora.
+  - Podem acontecer por webservice ou trigger
   - Logs: 
 Data Lake -> 
 
